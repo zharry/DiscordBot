@@ -11,6 +11,8 @@ public class DiscordBot {
 
 	public static void main(String[] args) {
 
+		System.out.println("Prefix is " + BOT_PREFIX);
+
 		try {
 			jda = new JDABuilder(AccountType.BOT).addEventListener(new BotListener()).setToken(BOT_TOKEN)
 					.buildBlocking();
