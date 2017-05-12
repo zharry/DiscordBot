@@ -11,6 +11,7 @@ public class DiscordBot {
 
 	public static void main(String[] args) {
 
+		System.out.println("Welcome to Harry's Discord Bot!");
 		System.out.println("Prefix is " + BOT_PREFIX);
 
 		try {
