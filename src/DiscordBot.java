@@ -5,7 +5,7 @@ import net.dv8tion.jda.core.JDABuilder;
 public class DiscordBot {
 
 	public static JDA jda;
-
+ 
 	public static final int VERSION = 1;
 	public static final String BOT_TOKEN = "MzEyMzQ4NjE5MjE2OTEyMzg1.C_aGcQ.lWJV2QDFO9ZxjuAdQKtmzDFIHbY";
 	public static final String BOT_PREFIX = ">";
