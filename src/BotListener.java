@@ -4,7 +4,6 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.Charset;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
 
 import org.json.JSONObject;
 
@@ -85,7 +84,6 @@ public class BotListener extends ListenerAdapter {
 			fetchUserData += fetchUserDataProc;
 		r.close();
 
-		ArrayList<String> list = new ArrayList<String>();
 		JSONObject data = new JSONObject(fetchUserData);
 		data = new JSONObject(
 				"{" + data.get("data").toString().substring(1, data.get("data").toString().length() - 1) + "}");
