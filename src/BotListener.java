@@ -13,6 +13,7 @@ import java.util.Map;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import net.dv8tion.jda.core.entities.Game;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 
@@ -31,6 +32,8 @@ public class BotListener extends ListenerAdapter {
 			case "prefix":
 				DiscordBot.BOT_PREFIX = args.charAt(0) + "";
 				returnMessage = "Prefix changed to " + args.charAt(0) + ".";
+				DiscordBot.jda.getPresence()
+						.setGame(Game.of(DiscordBot.PLAYING_GAME + " | " + DiscordBot.BOT_PREFIX + "help"));
 				break;
 			case "ping":
 				returnMessage = "Pong!";
