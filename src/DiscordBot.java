@@ -7,7 +7,7 @@ public class DiscordBot {
 
 	public static JDA jda;
 
-	public static final int VERSION = 3;
+	public static final int VERSION = 4;
 	
 	public static String BOT_TOKEN;
 	public static String BOT_PREFIX = ">";
