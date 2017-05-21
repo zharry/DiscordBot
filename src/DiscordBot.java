@@ -7,14 +7,16 @@ public class DiscordBot {
 
 	public static JDA jda;
 
-	public static final int VERSION = 2;
-	public static final String BOT_TOKEN = "MzEyMzQ4NjE5MjE2OTEyMzg1.C_aGcQ.lWJV2QDFO9ZxjuAdQKtmzDFIHbY";
+	public static final int VERSION = 3;
 	
+	public static String BOT_TOKEN;
 	public static String BOT_PREFIX = ">";
 	public static String PLAYING_GAME = "Paragon";
 
 	public static void main(String[] args) {
 
+		BOT_TOKEN = args[0];
+		
 		System.out.println("Welcome to Harry's Discord Bot! Version " + VERSION);
 		System.out.println("Prefix is " + BOT_PREFIX);
 
