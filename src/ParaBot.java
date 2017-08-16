@@ -3,11 +3,11 @@ import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
 import net.dv8tion.jda.core.entities.Game;
 
-public class DiscordBot {
+public class ParaBot {
 
 	public static JDA jda;
 
-	public static final int VERSION = 4;
+	public static final String VERSION = "6.0.0";
 	
 	public static String BOT_TOKEN;
 	public static String BOT_PREFIX = ">";
@@ -17,7 +17,7 @@ public class DiscordBot {
 
 		BOT_TOKEN = args[0];
 		
-		System.out.println("Welcome to Harry's Discord Bot! Version " + VERSION);
+		System.out.println("Welcome to Harry's Paragon Discord Bot! Version " + VERSION);
 		System.out.println("Prefix is " + BOT_PREFIX);
 
 		try {

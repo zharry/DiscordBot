@@ -1,17 +1,16 @@
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.io.StringReader;
+import java.math.BigDecimal;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.Charset;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
+import javax.json.Json;
+import javax.json.stream.JsonParser;
+import javax.json.stream.JsonParser.Event;
 
 import net.dv8tion.jda.core.entities.Game;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
@@ -23,17 +22,16 @@ public class BotListener extends ListenerAdapter {
 	public void onMessageReceived(MessageReceivedEvent e) {
 
 		String message = e.getMessage().getRawContent().toLowerCase();
-		if (message.startsWith(DiscordBot.BOT_PREFIX)) {
+		if (message.startsWith(ParaBot.BOT_PREFIX)) {
 			message = message.substring(1);
 			String cmd = splitCommand(message)[0], args = splitCommand(message)[1];
 
 			String returnMessage = "";
 			switch (cmd) {
 			case "prefix":
-				DiscordBot.BOT_PREFIX = args.charAt(0) + "";
+				ParaBot.BOT_PREFIX = args.charAt(0) + "";
 				returnMessage = "Prefix changed to " + args.charAt(0) + ".";
-				DiscordBot.jda.getPresence()
-						.setGame(Game.of(DiscordBot.PLAYING_GAME + " | " + DiscordBot.BOT_PREFIX + "help"));
+				ParaBot.jda.getPresence().setGame(Game.of(ParaBot.PLAYING_GAME + " | " + ParaBot.BOT_PREFIX + "help"));
 				break;
 			case "ping":
 				returnMessage = "Pong!";
@@ -49,14 +47,14 @@ public class BotListener extends ListenerAdapter {
 				}
 				break;
 			case "help":
-				returnMessage = "\nBot Commands:\n" + DiscordBot.BOT_PREFIX + "help: Displays this message\n"
-						+ DiscordBot.BOT_PREFIX + "ping: Pings the bot\n" + DiscordBot.BOT_PREFIX
-						+ "prefix [prefix]: Changes the bot prefix\n";
-				returnMessage += "\nParagon Bot Commands:\n" + DiscordBot.BOT_PREFIX
-						+ "elo [username]: Username's ELO, W/L and KDA according to Agora.gg\n";
+				returnMessage = "```\nParagon Bot (Version " + ParaBot.VERSION + ")\n\nBot Commands:\n"
+						+ ParaBot.BOT_PREFIX + "help: Displays this message\n" + ParaBot.BOT_PREFIX
+						+ "ping: Pings the bot\n" + ParaBot.BOT_PREFIX + "prefix [prefix]: Changes the bot prefix\n";
+				returnMessage += "\nAgora.gg Bot Commands:\n" + ParaBot.BOT_PREFIX
+						+ "elo [username]: Username's ELO, W/L and KDA\n```";
 				break;
 			default:
-				returnMessage = "Sorry '" + message + "', is not a command.\nSee " + DiscordBot.BOT_PREFIX
+				returnMessage = "Sorry '" + message + "', is not a command.\nSee " + ParaBot.BOT_PREFIX
 						+ "help for a list of commands.";
 
 			}
@@ -71,7 +69,7 @@ public class BotListener extends ListenerAdapter {
 
 		try {
 			// Search for User
-			URLConnection agora = new URL("https://api.agora.gg/players/search/" + username).openConnection();
+			URLConnection agora = new URL("https://api.agora.gg/v1/players/search?name=" + username).openConnection();
 			agora.setRequestProperty("User-Agent",
 					"Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
 			agora.connect();
@@ -85,13 +83,14 @@ public class BotListener extends ListenerAdapter {
 			// Locate Player ID
 			boolean found = false;
 			try {
-				JSONArray json = new JSONArray(new JSONObject(fetchUserId).getJSONArray("data").toString());
-				for (int i = 0; i < json.length(); i++) {
-					Map<String, Object> idsMap = toMap((JSONObject) json.get(i));
-					int playerID = Integer.parseInt(idsMap.get("id").toString());
+				ArrayList<String> ids = getKeyVals(fetchUserId, "id");
+
+				for (int i = 0; i < ids.size(); i++) {
+					String playerID = ids.get(i);
 
 					// Search for Player ID Data
-					URLConnection agoraPlayers = new URL("https://api.agora.gg/players/" + playerID).openConnection();
+					URLConnection agoraPlayers = new URL("https://api.agora.gg/v1/players/" + playerID)
+							.openConnection();
 					agoraPlayers.setRequestProperty("User-Agent",
 							"Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
 					agoraPlayers.connect();
@@ -103,42 +102,37 @@ public class BotListener extends ListenerAdapter {
 					r.close();
 
 					// Check Profile Status
-					JSONArray data = new JSONObject(fetchUserData).getJSONObject("data").getJSONArray("stats");
-					if (new JSONObject(fetchUserData).getJSONObject("data").get("privacyEnabled").toString()
-							.equals("true")) {
+					boolean privacy = getKeyVals(fetchUserData, "privacyEnabled").get(0).equals("true") ? true : false;
+					if (privacy) {
 						message += "User's profile is hidden.\n--------\n";
-						found = true;
 					} else {
 						// Find Player's PVP Stats
-						for (int j = 0; j < data.length(); j++) {
-							Map<String, Object> statsMap = toMap((JSONObject) data.get(j));
-							if (Integer.parseInt(statsMap.get("mode").toString()) == 4) {
-								found = true;
+						double elo = Double.parseDouble(getKeyVals(fetchUserData, "elo").get(0));
+						int wins = Integer.parseInt(getKeyVals(fetchUserData, "wins").get(0));
+						int games = Integer.parseInt(getKeyVals(fetchUserData, "gamesPlayed").get(0));
+						double wl = games == 0 ? 0 : wins / (double) games;
 
-								// Calculate Player Info
-								double elo = Double.parseDouble(statsMap.get("elo").toString());
-								double wins = Double.parseDouble(statsMap.get("wins").toString());
-								double games = Double.parseDouble(statsMap.get("gamesPlayed").toString());
-								double wl = games == 0 ? 0 : wins / games;
-								double kills = Double.parseDouble(statsMap.get("kills").toString());
-								double deaths = Double.parseDouble(statsMap.get("deaths").toString());
-								double assists = Double.parseDouble(statsMap.get("assists").toString());
-								double kda = deaths == 0 ? 0 : (kills + assists) / deaths;
+						int kills = Integer.parseInt(getKeyVals(fetchUserData, "kills").get(0));
+						int deaths = Integer.parseInt(getKeyVals(fetchUserData, "deaths").get(0));
+						int assists = Integer.parseInt(getKeyVals(fetchUserData, "assists").get(0));
+						double kda = deaths == 0 ? 0 : (kills + assists) / (double) deaths;
 
-								DecimalFormat format = new DecimalFormat("#.00");
-								message += "ELO: " + format.format(elo) + "\nW/L: " + format.format(wl * 100)
-										+ "%\nKDA: " + format.format(kda) + "\n--------\n";
-							}
-						}
+						DecimalFormat format = new DecimalFormat("#.00");
+						message += "ELO: " + format.format(elo) + "\nW/L: " + format.format(wl * 100) + "%\nKDA: "
+								+ format.format(kda) + "\n--------\n";
 					}
+					found = true;
+
 				}
 				if (!found)
 					message += "No PVP Games on record.\n--------\n";
+
 			} catch (Exception e) {
 				message += "User not found.\n--------\n";
 			}
 		} catch (Exception e) {
-			message += "Something went wrong, please try again.\n--------\n";
+			message += "Something went wrong, please try again.\n--------\nError: ";
+			message += e + "\n--------\n";
 		}
 		return message + "```";
 	}
@@ -150,40 +144,47 @@ public class BotListener extends ListenerAdapter {
 		return new String[] { cmd, args };
 	}
 
-	public static Map<String, Object> toMap(JSONObject object) {
-		Map<String, Object> map = new HashMap<String, Object>();
+	public ArrayList<String> getKeyVals(String json, String wantKey) {
+		final JsonParser parser = Json.createParser(new StringReader(json));
+		ArrayList<String> vals = new ArrayList<String>();
 
-		Iterator<String> keysItr = object.keySet().iterator();
-		while (keysItr.hasNext()) {
-			String key = keysItr.next();
-			Object value = object.get(key);
-
-			if (value instanceof JSONArray) {
-				value = toList((JSONArray) value);
+		String key = null;
+		boolean addNext = false;
+		while (parser.hasNext()) {
+			final Event event = parser.next();
+			switch (event) {
+			case KEY_NAME:
+				key = parser.getString();
+				if (key.equals(wantKey)) {
+					addNext = true;
+				}
+				break;
+			case VALUE_STRING:
+				String string = parser.getString();
+				if (addNext)
+					vals.add(string);
+				addNext = false;
+				break;
+			case VALUE_NUMBER:
+				BigDecimal number = parser.getBigDecimal();
+				if (addNext)
+					vals.add(number + "");
+				addNext = false;
+				break;
+			case VALUE_TRUE:
+				if (addNext)
+					vals.add("true");
+				addNext = false;
+				break;
+			case VALUE_FALSE:
+				if (addNext)
+					vals.add("false");
+				addNext = false;
+				break;
 			}
-
-			else if (value instanceof JSONObject) {
-				value = toMap((JSONObject) value);
-			}
-			map.put(key, value);
 		}
-		return map;
+
+		parser.close();
+		return vals;
 	}
-
-	public static List<Object> toList(JSONArray array) {
-		List<Object> list = new ArrayList<Object>();
-		for (int i = 0; i < array.length(); i++) {
-			Object value = array.get(i);
-			if (value instanceof JSONArray) {
-				value = toList((JSONArray) value);
-			}
-
-			else if (value instanceof JSONObject) {
-				value = toMap((JSONObject) value);
-			}
-			list.add(value);
-		}
-		return list;
-	}
-
 }
