@@ -45,7 +45,7 @@ Paragon Discord Bot.
 	 * Above 30: Excellent
 
 #### Aug 16, 2017
-- Renamed bot from DiscordBot to ParaBot
+- Renamed from DiscordBot to ParaBot
 - Updated Elo function to match Agora.gg API v1 and Paragon's v.42 update
 - Changed JSON parser from *org.json* to *javax.json* 
 
