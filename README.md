@@ -3,6 +3,8 @@ Paragon Discord Bot, made by Harry
 
 ### Functions
 - Elo Checking with Agora.gg API
+- Custom Ranking system based on KDA, W/L and ELO
+- Live game checking
 
 ### Uses the following libraries:
 JDA: http://home.dv8tion.net:8080/job/JDA/
