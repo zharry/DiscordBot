@@ -24,7 +24,7 @@ public class BotListener extends ListenerAdapter {
 					returnMessage = BotCommands.getElo(args, true);
 					break;
 				case "game":
-					//returnMessage = BotCommands.getGame(args);
+					// returnMessage = BotCommands.getGame(args);
 					break;
 				case "help":
 					returnMessage = "```\n";
@@ -50,7 +50,7 @@ public class BotListener extends ListenerAdapter {
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
-			
+
 			// Send Message
 			e.getChannel()
 					.sendMessage(/* e.getAuthor().getAsMention() + " " + */returnMessage).queue();

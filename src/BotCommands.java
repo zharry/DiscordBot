@@ -81,7 +81,7 @@ public class BotCommands {
 							String rank = "";
 
 							score += Math.floor(wl * 100) - 50;
-							score += Math.floor((kda - 2) / 0.1);
+							score += Math.floor((kda - 2) / 0.15);
 							if (elo < 1300)
 								score += -5;
 							else if (elo < 1400)

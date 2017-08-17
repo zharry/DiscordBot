@@ -24,7 +24,7 @@ JsonP: https://javaee.github.io/jsonp/
 - Added Stat function
 ##### Stat Calculation
 	 * For each 1% win rate (above 50%), add 1pts 
-	 * For each 0.1 KDA (above 2), add 1pt
+	 * For each 0.15 KDA (above 2), add 1pt
 	 * 
 	 * Elo Ranges: 
 	 * Below 1300: Silver/Bronze (-5pts)
@@ -41,7 +41,6 @@ JsonP: https://javaee.github.io/jsonp/
 	 * 5-10: Average 
 	 * 10-20: Good 
 	 * Above 30: Excellent
-	 *
 
 #### Aug 16, 2017
 - Renamed bot from DiscordBot to ParaBot

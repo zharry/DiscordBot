@@ -8,7 +8,7 @@ public class ParaBot {
 	public static JDA jda;
 
 	public static final String VERSION = "6.1.1";
-	
+
 	public static String BOT_TOKEN;
 	public static String BOT_PREFIX = ">";
 	public static String PLAYING_GAME = "Paragon";
@@ -16,7 +16,7 @@ public class ParaBot {
 	public static void main(String[] args) {
 
 		BOT_TOKEN = args[0];
-		
+
 		System.out.println("Welcome to Harry's Paragon Discord Bot! Version " + VERSION);
 		System.out.println("Prefix is " + BOT_PREFIX);
 
