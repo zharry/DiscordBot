@@ -23,7 +23,6 @@ JsonP: https://javaee.github.io/jsonp/
 #### Aug 17, 2017
 - Added Stat function
 ##### Stat Calculation
-	 * 
 	 * For each 1% win rate (above 50%), add 1pts 
 	 * For each 0.1 KDA (above 2), add 1pt
 	 * 
