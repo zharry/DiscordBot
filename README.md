@@ -47,7 +47,7 @@ Paragon Discord Bot.
 #### Aug 16, 2017
 - Renamed bot from DiscordBot to ParaBot
 - Updated Elo function to match Agora.gg API v1 and Paragon's v.42 update
-- Changed JSON parser from *org.json* to *javax.json*
+- Changed JSON parser from *org.json* to *javax.json* 
 
 #### Prior to May 21, 2017
 - Initial Release
