@@ -1,5 +1,5 @@
 # DiscordBot
-Paragon Discord Bot, made by Harry.
+Paragon Discord Bot.
 
 ### Functions
 - Elo Checking with Agora.gg API
