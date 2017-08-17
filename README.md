@@ -1,5 +1,9 @@
 # DiscordBot
+<<<<<<< 04103686820adff8a12bc71a101037f6f0142833
 Paragon Discord Bot.
+=======
+Paragon Discord Bot
+>>>>>>> Testing
 
 ### Functions
 - Elo Checking with Agora.gg API
