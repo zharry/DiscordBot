@@ -18,10 +18,10 @@ public class BotListener extends ListenerAdapter {
 					returnMessage = "Pong!";
 					break;
 				case "elo":
-					returnMessage = BotCommands.getElo(args, false);
+					returnMessage = BotCommands.getElo(args);
 					break;
 				case "stat":
-					returnMessage = BotCommands.getElo(args, true);
+					returnMessage = BotCommands.getStat(args);
 					break;
 				case "game":
 					// returnMessage = BotCommands.getGame(args);
