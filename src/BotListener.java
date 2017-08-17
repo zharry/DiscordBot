@@ -4,6 +4,7 @@ import java.io.StringReader;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -12,7 +13,6 @@ import javax.json.Json;
 import javax.json.stream.JsonParser;
 import javax.json.stream.JsonParser.Event;
 
-import net.dv8tion.jda.core.entities.Game;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 
@@ -28,16 +28,17 @@ public class BotListener extends ListenerAdapter {
 
 			String returnMessage = "";
 			switch (cmd) {
-			case "prefix":
-				ParaBot.BOT_PREFIX = args.charAt(0) + "";
-				returnMessage = "Prefix changed to " + args.charAt(0) + ".";
-				ParaBot.jda.getPresence().setGame(Game.of(ParaBot.PLAYING_GAME + " | " + ParaBot.BOT_PREFIX + "help"));
-				break;
+			/*
+			 * Disabled Prefix changing. It's currently not per-server basis, so
+			 * it's a bit hectic
+			 * 
+			 * case "prefix": ParaBot.BOT_PREFIX = args.charAt(0) + "";
+			 * returnMessage = "Prefix changed to " + args.charAt(0) + ".";
+			 * ParaBot.jda.getPresence().setGame(Game.of(ParaBot.PLAYING_GAME +
+			 * " | " + ParaBot.BOT_PREFIX + "help")); break;
+			 */
 			case "ping":
 				returnMessage = "Pong!";
-				break;
-			case "debug":
-				returnMessage = "Command: " + cmd + ", Arguments: " + args;
 				break;
 			case "elo":
 				try {
@@ -47,11 +48,17 @@ public class BotListener extends ListenerAdapter {
 				}
 				break;
 			case "help":
-				returnMessage = "```\nParagon Bot (Version " + ParaBot.VERSION + ")\n\nBot Commands:\n"
-						+ ParaBot.BOT_PREFIX + "help: Displays this message\n" + ParaBot.BOT_PREFIX
-						+ "ping: Pings the bot\n" + ParaBot.BOT_PREFIX + "prefix [prefix]: Changes the bot prefix\n";
-				returnMessage += "\nAgora.gg Bot Commands:\n" + ParaBot.BOT_PREFIX
-						+ "elo [username]: Username's ELO, W/L and KDA\n```";
+				returnMessage = "```\n";
+				returnMessage += "Paragon Bot (Version " + ParaBot.VERSION + ")\n\n";
+				returnMessage += "\n";
+				returnMessage += "Bot Commands:\n";
+				returnMessage += ParaBot.BOT_PREFIX + "help: Displays this message\n";
+				returnMessage += ParaBot.BOT_PREFIX + "ping: Pings the bot\n";
+				// returnMessage += ParaBot.BOT_PREFIX + "prefix [prefix]:
+				// Changes the bot prefix\n";
+				returnMessage += "\n";
+				returnMessage += "Agora.gg Bot Commands:\n";
+				returnMessage += ParaBot.BOT_PREFIX + "elo [username]: Username's ELO, W/L and KDA\n```";
 				break;
 			default:
 				returnMessage = "Sorry '" + message + "', is not a command.\nSee " + ParaBot.BOT_PREFIX
@@ -69,7 +76,9 @@ public class BotListener extends ListenerAdapter {
 
 		try {
 			// Search for User
-			URLConnection agora = new URL("https://api.agora.gg/v1/players/search?name=" + username).openConnection();
+			URLConnection agora = new URL(
+					"https://api.agora.gg/v1/players/search?name=" + URLEncoder.encode(username, "UTF-8"))
+							.openConnection();
 			agora.setRequestProperty("User-Agent",
 					"Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
 			agora.connect();
@@ -89,8 +98,8 @@ public class BotListener extends ListenerAdapter {
 					String playerID = ids.get(i);
 
 					// Search for Player ID Data
-					URLConnection agoraPlayers = new URL("https://api.agora.gg/v1/players/" + playerID)
-							.openConnection();
+					URLConnection agoraPlayers = new URL(
+							"https://api.agora.gg/v1/players/" + URLEncoder.encode(playerID, "UTF-8")).openConnection();
 					agoraPlayers.setRequestProperty("User-Agent",
 							"Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
 					agoraPlayers.connect();
@@ -144,6 +153,7 @@ public class BotListener extends ListenerAdapter {
 		return new String[] { cmd, args };
 	}
 
+	@SuppressWarnings("incomplete-switch")
 	public ArrayList<String> getKeyVals(String json, String wantKey) {
 		final JsonParser parser = Json.createParser(new StringReader(json));
 		ArrayList<String> vals = new ArrayList<String>();

@@ -7,7 +7,7 @@ public class ParaBot {
 
 	public static JDA jda;
 
-	public static final String VERSION = "6.1.0";
+	public static final String VERSION = "6.1.1";
 	
 	public static String BOT_TOKEN;
 	public static String BOT_PREFIX = ">";
