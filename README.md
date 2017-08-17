@@ -20,6 +20,30 @@ JsonP: https://javaee.github.io/jsonp/
 
 ### Release Notes
 
+#### Aug 17, 2017
+- Added Stat function
+	 * Stat Calculation
+	 * 
+	 * For each 1% win rate (above 50%), add 1pts 
+	 * For each 0.1 KDA (above 2), add 1pt
+	 * 
+	 * Elo Ranges: 
+	 * Below 1300: Silver/Bronze (-5pts)
+	 * 1300-1400: Low Gold (-1pt) 
+	 * 1400-1500: Gold (+0pts) 
+	 * 1500-1600: Plat (+2pts) 
+	 * 1600-1700: High Plat (+5pts) 
+	 * 1700-2000: Diamond (+10pts) 
+	 * Above 2000: Masters (+20pts)
+	 * 
+	 * Point Scores: 
+	 * Below 0: Boosted 
+	 * 0-5: Trade 
+	 * 5-10: Average 
+	 * 10-20: Good 
+	 * Above 30: Excellent
+	 *
+
 #### Aug 16, 2017
 - Renamed bot from DiscordBot to ParaBot
 - Updated Elo function to match Agora.gg API v1 and Paragon's v.42 update
