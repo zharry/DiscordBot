@@ -1,5 +1,5 @@
 # DiscordBot
-Paragon Discord Bot, made by Harry 
+Paragon Discord Bot, made by Harry.
 
 ### Functions
 - Elo Checking with Agora.gg API
@@ -7,8 +7,8 @@ Paragon Discord Bot, made by Harry
 - Live game checking
 
 ### Uses the following libraries:
-JDA: http://home.dv8tion.net:8080/job/JDA/
-JsonP: https://javaee.github.io/jsonp/
+- JDA: http://home.dv8tion.net:8080/job/JDA/
+- JsonP: https://javaee.github.io/jsonp/
 
 ### How to deploy to servers
 1. Clone repository
