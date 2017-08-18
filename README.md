@@ -23,6 +23,7 @@ Paragon Discord Bot.
 ### Release Notes
 
 #### Aug 17, 2017
+- Added Game function (get Elo of all players in current game)
 - Added Stat function
 ##### Stat Calculation
 	 * For each 1% win rate (above 50%), add 1pts 

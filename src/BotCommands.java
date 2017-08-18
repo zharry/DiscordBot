@@ -1,6 +1,8 @@
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 public class BotCommands {
 
@@ -84,16 +86,50 @@ public class BotCommands {
 						rank = "Excellent";
 
 					message += "Rank: " + rank + "\n";
-					message += "Stat: " + score + "\n--------\n";
+					message += "Stat: " + score + "";
 				} else
 					message += data.get("Error");
-								
+
 				if (i != ids.size() - 1)
-					message += "\n--------\n";
+					message += "";
 			}
 		}
 
-		return message + "```";
+		return message + "\n--------\n```";
 	}
 
+	public static String getCurGame(String username) throws Exception {
+
+		String message = "```\n" + username + "\n--------\n";
+
+		// Locate Player ID
+		ArrayList<String> ids = AgoraGG.usernameToUserID(username);
+
+		if (ids.get(0).equals("Error")) {
+			message += ids.get(1);
+		} else {
+			for (int i = 0; i < ids.size(); i++) {
+				String playerID = ids.get(i);
+
+				// Get for current game for player
+				ArrayList<HashMap<String, String>> data = AgoraGG.fetchUserCurrentGame(playerID);
+				if (!data.get(0).containsKey("Error")) {
+					for (int a = 0; a < 2; a++) {
+			    		message += "\n";
+			    		message += "Team " + (a + 1) + ":\n";
+					    Iterator it = data.get(a).entrySet().iterator();
+					    while (it.hasNext()) {
+					        Map.Entry pair = (Map.Entry)it.next();
+					        String user = pair.getKey() + "";
+							DecimalFormat format = new DecimalFormat("#.00");
+							message += user + ": " + format.format(Double.parseDouble(pair.getValue() + "")) +"\n";
+					        it.remove();
+					    }
+					}
+				} else
+					message += data.get(0).get("Error");
+			}
+		}
+		return message + "\n--------\n```";
+	}
 }

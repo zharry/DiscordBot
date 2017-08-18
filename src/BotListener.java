@@ -24,7 +24,7 @@ public class BotListener extends ListenerAdapter {
 					returnMessage = BotCommands.getStat(args);
 					break;
 				case "game":
-					// returnMessage = BotCommands.getGame(args);
+					returnMessage = BotCommands.getCurGame(args);
 					break;
 				case "help":
 					returnMessage = "```\n";

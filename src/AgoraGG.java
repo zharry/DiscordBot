@@ -18,7 +18,7 @@ public class AgoraGG {
 	/**
 	 * @param username
 	 *            Username
-	 * @return ArrayList<String> {"id"[, "id"]} or {"Error", "User not found"}
+	 * @return ArrayList<String> ["id"[, "id"]] or {"Error", "User not found"}
 	 * @throws Exception
 	 */
 	public static ArrayList<String> usernameToUserID(String username) throws Exception {
@@ -56,7 +56,6 @@ public class AgoraGG {
 	public static HashMap<String, String> fetchUserPVPData(String playerID) {
 
 		HashMap<String, String> data = new HashMap<String, String>();
-		data.put("sdg", "sheg");
 		try {
 			URLConnection agoraPlayers = new URL(
 					"https://api.agora.gg/v1/players/" + URLEncoder.encode(playerID, "UTF-8")).openConnection();
@@ -99,6 +98,54 @@ public class AgoraGG {
 			System.out.println(e);
 		}
 		return data;
+	}
+
+	/**
+	 * @param playerID
+	 *            PlayerID
+	 * @return ArrayList<HashMap<String, String>> [{"Username" => "Elo",...},
+	 *         {"Username" => "Elo",...}] or [{"Error" => "Error Message"}]
+	 */
+	public static ArrayList<HashMap<String, String>> fetchUserCurrentGame(String playerID) {
+
+		ArrayList<HashMap<String, String>> returnData = new ArrayList<HashMap<String, String>>();
+		HashMap<String, String> data2 = new HashMap<String, String>();
+		HashMap<String, String> data = new HashMap<String, String>();
+		try {
+			URLConnection agoraGamesNow = new URL(
+					"https://api.agora.gg/v1/games/now/" + URLEncoder.encode(playerID, "UTF-8")).openConnection();
+			agoraGamesNow.setRequestProperty("User-Agent",
+					"Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
+			agoraGamesNow.connect();
+			BufferedReader in = new BufferedReader(
+					new InputStreamReader(agoraGamesNow.getInputStream(), Charset.forName("UTF-8")));
+			String fetchGameDataProc, fetchGameData = "";
+			while ((fetchGameDataProc = in.readLine()) != null)
+				fetchGameData += fetchGameDataProc;
+			in.close();
+
+			ArrayList<String> players = getKeyVals(fetchGameData, "name");
+			ArrayList<String> elo = getKeyVals(fetchGameData, "totalElo");
+
+			if (players.size() == 10) {
+				for (int i = 0; i < 10; i++) {
+					if (i < 5)
+						data.put(players.get(i), elo.get(i));
+					else
+						data2.put(players.get(i), elo.get(i));
+				}
+				returnData.add(data);
+				returnData.add(data2);
+			} else {
+				data.put("Error", "Player is currently not in a game!");
+				returnData.add(data);
+			}
+		} catch (Exception e) {
+			data.put("Error", "Something went wrong, check server logs!");
+			returnData.add(data);
+			System.out.println(e);
+		}
+		return returnData;
 	}
 
 	public static ArrayList<String> getKeyVals(String json, String wantKey) {
