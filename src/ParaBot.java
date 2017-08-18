@@ -7,7 +7,7 @@ public class ParaBot {
 
 	public static JDA jda;
 
-	public static final String VERSION = "7.0.0";
+	public static final String VERSION = "7.1.0";
 
 	public static String BOT_TOKEN;
 	public static String BOT_PREFIX = ">";
@@ -17,7 +17,7 @@ public class ParaBot {
 
 		BOT_TOKEN = args[0];
 
-		System.out.println("Welcome to Harry's Paragon Discord Bot! Version " + VERSION);
+		System.out.println("Welcome to the Paragon Discord Bot! Version " + VERSION);
 		System.out.println("Prefix is " + BOT_PREFIX);
 
 		try {
