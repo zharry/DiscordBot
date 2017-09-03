@@ -74,14 +74,17 @@ public class AgoraGG {
 			if (privacy) {
 				data.put("Error", "User's profile is hidden!");
 			} else {
-				double elo = Double.parseDouble(getKeyVals(fetchUserData, "elo").get(0));
-				int wins = Integer.parseInt(getKeyVals(fetchUserData, "wins").get(0));
-				int games = Integer.parseInt(getKeyVals(fetchUserData, "gamesPlayed").get(0));
+				
+				System.out.println(getKeyValAfterKey(fetchUserData, "mode", "4", "elo"));
+				
+				double elo = Double.parseDouble(getKeyValAfterKey(fetchUserData, "mode", "4", "elo"));
+				int wins = Integer.parseInt(getKeyValAfterKey(fetchUserData, "mode", "4", "wins"));
+				int games = Integer.parseInt(getKeyValAfterKey(fetchUserData, "mode", "4", "gamesPlayed"));
 				double wl = games == 0 ? 0 : wins / (double) games;
 
-				int kills = Integer.parseInt(getKeyVals(fetchUserData, "kills").get(0));
-				int deaths = Integer.parseInt(getKeyVals(fetchUserData, "deaths").get(0));
-				int assists = Integer.parseInt(getKeyVals(fetchUserData, "assists").get(0));
+				int kills = Integer.parseInt(getKeyValAfterKey(fetchUserData, "mode", "4", "kills"));
+				int deaths = Integer.parseInt(getKeyValAfterKey(fetchUserData, "mode", "4", "deaths"));
+				int assists = Integer.parseInt(getKeyValAfterKey(fetchUserData, "mode", "4", "assists"));
 				double kda = deaths == 0 ? 0 : (kills + assists) / (double) deaths;
 
 				data.put("elo", elo + "");
@@ -192,6 +195,61 @@ public class AgoraGG {
 
 		parser.close();
 		return vals;
+	}
+
+	public static String getKeyValAfterKey(String json, String preKey, String val, String wantKey) {
+		final JsonParser parser = Json.createParser(new StringReader(json));
+
+		String key = null;
+		boolean isPreKey = false, foundPreKey = false;
+		boolean isWantKey = false;
+		while (parser.hasNext()) {
+			final Event event = parser.next();
+			switch (event) {
+			case KEY_NAME:
+				key = parser.getString();
+				if (key.equals(preKey))
+					isPreKey = true;
+				if (key.equals(wantKey) && foundPreKey)
+					isWantKey = true;
+				break;
+			case VALUE_STRING:
+				String string = parser.getString();
+				if (isPreKey && val.equals(string))
+					foundPreKey = true;
+				if (isWantKey)
+					return string;
+				isPreKey = false;
+				break;
+			case VALUE_NUMBER:
+				BigDecimal number = parser.getBigDecimal();
+				if (isPreKey && val.equals(number + ""))
+					foundPreKey = true;
+				if (isWantKey)
+					return number + "";
+				isPreKey = false;
+				break;
+			case VALUE_TRUE:
+				if (isPreKey && val.equals("true"))
+					foundPreKey = true;
+				if (isWantKey)
+					return "true";
+				isPreKey = false;
+				break;
+			case VALUE_FALSE:
+				if (isPreKey && val.equals("false"))
+					foundPreKey = true;
+				if (isWantKey)
+					return "false";
+				isPreKey = false;
+				break;
+			default:
+				break;
+			}
+		}
+
+		parser.close();
+		return "";
 	}
 
 }
